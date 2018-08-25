@@ -1,10 +1,10 @@
 <template>
   <div class="appraise">
-    <mt-header :title="this.$route.params.shopName">
+    <!-- <mt-header :title="this.$route.params.shopName">
       <router-link to="/ShopInfo" slot="left">
         <mt-button icon="back"></mt-button>
       </router-link>
-    </mt-header>
+    </mt-header> -->
     <div class="top">
       <div class="imgBox">
         <img :src="this.$route.params.imgUrl" alt="">
@@ -37,8 +37,7 @@
       <div class="">
         <div class="font12 textLeft mt10">上传图片</div>
         <div class="upImgBox">
-
-
+          <Upload/>
         </div>
         <div class="textRight ">
           <div class="font10"><span>最多6张</span></div>
@@ -69,6 +68,7 @@ import iconOk from '@/images/icon_ok.png'
 import iconOkActive from '@/images/icon_ok_active.png'
 import iconBad from '@/images/icon_bad.png'
 import iconBadActive from '@/images/icon_bad_active.png'
+import Upload from '@/components/Upload'
 
 export default {
   name: 'Appraise',
@@ -108,6 +108,9 @@ export default {
       this.isActive = index+1
     }
   },
+  components:{
+    Upload
+  }
 }
 </script>
 
@@ -133,7 +136,7 @@ export default {
       border: 1px solid #eee;margin-top: 10px; outline:none;
       padding: 10px;width: 100%;  box-sizing: border-box;
     }
-    .upImgBox{width: 100%;border: 1px solid #ccc;padding-bottom: 20px;
+    .upImgBox{width: 100%;border: 1px solid #ccc;
       margin-top: 10px;
     }
     .textRight{height: 20px;position: relative;}

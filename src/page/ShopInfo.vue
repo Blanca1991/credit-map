@@ -1,10 +1,10 @@
 <template>
   <div class="shopInfo" >
-    <mt-header title="商铺详情">
+    <!-- <mt-header title="商铺详情">
       <router-link to="/" slot="left">
         <mt-button icon="back"></mt-button>
       </router-link>
-    </mt-header>
+    </mt-header> -->
     <div class="top">
       <div class="imgBox">
         <img :src="shopInfo.imgUrl" alt="">
@@ -106,8 +106,9 @@ export default {
       let title = '拨打电话';
       MessageBox.confirm(message, title).then(action => {
         window.location.href = "tel:10086";
+        console.log('拨打电话');
       }).catch(() => {
-        console.log(444);
+        console.log('取消电话');
       });;
     }
   },
@@ -124,9 +125,7 @@ export default {
   height: 100vh; overflow: auto; background: #F9F9F9;
   .mint-header{position: absolute;width: 100vw;}
   .top{
-    margin-top: 20px;
-    background: #fff;
-    .imgBox{}
+    background: #fff;.imgBox{}
     .content{box-shadow:0px 2px 3px #eee;}
     img{width: 100vw;height: auto;}
   }

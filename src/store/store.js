@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
+      selectList: [],
 			shopList: [
 				{
 					shopName: '碧桂园',
@@ -67,6 +68,7 @@ export default new Vuex.Store({
 					imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1535034547051&di=d5b10c1d1ef71b3570cbbbcabd510e18&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fadaf2edda3cc7cd90df1ede83401213fb80e9127.jpg',
 				}
 			],
+
       shopListPink: [
 				{
 					shopName: '1',
@@ -131,7 +133,8 @@ export default new Vuex.Store({
 					imgUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1535034547051&di=d5b10c1d1ef71b3570cbbbcabd510e18&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fadaf2edda3cc7cd90df1ede83401213fb80e9127.jpg',
 				}
 			],
-      shopInfo: {}
+      // 商品详情 需要上一页传递过去的信息
+      shopInfo: {},
     },
     getters: {
 
@@ -145,6 +148,9 @@ export default new Vuex.Store({
       },
       GETSHOPINFO (state, data) {
         this.state.shopInfo = data
+      },
+      GETSELECTLIST (state, data) {
+        this.state.selectList = data
       }
     },
     actions: {
