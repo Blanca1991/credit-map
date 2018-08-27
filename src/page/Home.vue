@@ -119,7 +119,7 @@ export default {
     init() {
       // Indicator.open();
       // Indicator.close();
-      this.contentHight = document.documentElement.clientHeight - 118
+      this.contentHight = document.documentElement.clientHeight - 78
     },
     changeTab (data, index) {
       console.log(data);
@@ -143,7 +143,6 @@ export default {
     loadBottom() {
       // 上滑 加载更多数据
       console.log('222');
-      this.$store.commit('GETALL','')
       // this.allLoaded = true;
       this.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
     },

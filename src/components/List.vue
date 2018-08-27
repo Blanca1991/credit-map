@@ -2,31 +2,31 @@
   <div class="list">
     <div class="flex borderLine" v-for="item in shopList" @click="goToShopInfo(item)">
       <div class="imgBox">
-        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1535034547051&di=d5b10c1d1ef71b3570cbbbcabd510e18&imgtype=0&src=http%3A%2F%2Fa.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fadaf2edda3cc7cd90df1ede83401213fb80e9127.jpg" alt="">
+        <img :src="item.shopPropagandaPhoto" alt="">
       </div>
       <div class="flex1" >
         <div class="flex justifyBetween paddingL10 alignCenter">
           <div class="title font20 fontBold">
             {{ item.shopName }}
           </div>
-          <div class="levelBox1 font10"  v-if="item.shopLevel == '1'">
+          <div class="levelBox1 font10"  v-if="item.shopScoreLevel == '1'">
             <div class="level1 textRight">
               <span>信用极好</span>
             </div>
           </div>
-          <div class="levelBox2 font10"  v-if="item.shopLevel == '2'">
+          <div class="levelBox2 font10"  v-if="item.shopScoreLevel == '2'">
             <div class="level2 textRight">
               <span>信用一般</span>
             </div>
           </div>
-          <div class="levelBox3 font10"  v-if="item.shopLevel == '3'">
+          <div class="levelBox3 font10"  v-if="item.shopScoreLevel == '3'">
             <div class="level3 textRight">
               <span>信用极差</span>
             </div>
           </div>
         </div>
         <div class="textLeft address font14">
-          <span>{{ item.shopAddress }}</span>
+          <span>{{ item.operatingAddress }}</span>
         </div>
       </div>
 

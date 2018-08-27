@@ -136,8 +136,7 @@ export default {
       border: 1px solid #eee;margin-top: 10px; outline:none;
       padding: 10px;width: 100%;  box-sizing: border-box;
     }
-    .upImgBox{width: 100%;border: 1px solid #ccc;
-      margin-top: 10px;
+    .upImgBox{width: 100%;margin-top: 10px;
     }
     .textRight{height: 20px;position: relative;}
     .font10{position: absolute;right: -10px;}
