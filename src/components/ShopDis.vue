@@ -6,29 +6,31 @@
           {{ shopInfo.shopName }}
         </div>
         <div class="paddingL10 ">
-          <div class="levelBox font10">
+          <div class="levelBox font10" v-if="shopInfo.shopScoreLevel">
             <div class="level textRight">
-              <span v-if="shopInfo.shopScoreLevel == '1'">信用极好</span>
-              <span v-if="shopInfo.shopScoreLevel == '2'">信用一般</span>
-              <span v-if="shopInfo.shopScoreLevel == '3'">信用较差</span>
+              <span v-if="shopInfo.shopScoreLevel == 'A'
+              || shopInfo.shopScoreLevel == 'B'">信用极好</span>
+              <span v-if="shopInfo.shopScoreLevel == 'C'
+              || shopInfo.shopScoreLevel == 'D'">信用一般</span>
+              <span v-if="shopInfo.shopScoreLevel == 'E'">信用较差</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="textLeft font14">
-        {{ shopInfo.detailDto.shopIntroduction}}
+      <div class="textLeft font14" v-if="shopInfo.detailDto && shopInfo.detailDto.shopIntroduction">
+        {{ shopInfo.detailDto.shopIntroduction }}
       </div>
     </div>
     <div class="font14 infoText">
       <div class="">
         <div class="flex borderLine justifyBetween">
           <div class="">注册名称</div>
-          <div class="rightWord">小郑的小店</div>
+          <div class="rightWord">{{ shopInfo.detailDto.regShopName}}</div>
         </div>
         <div class="flex borderLine justifyBetween">
           <div class="">经营地址</div>
           <div class="rightWord flex alignCenter" @click="goToMap()">
-            <div class="">徐家汇上台路</div>
+            <div class="">{{ shopInfo.detailDto.operatingAddress }}</div>
             <div class="resetIcon">
               <i class=" mintui mintui-back"></i>
             </div>
@@ -36,18 +38,18 @@
         </div>
         <div class="flex borderLine justifyBetween">
           <div class="">经营范围</div>
-          <div class="rightWord">日消品</div>
+          <div class="rightWord">{{ shopInfo.detailDto.businessType }}</div>
         </div>
         <div class="flex borderLine justifyBetween">
           <div class="">联系电话</div>
-          <div class="rightWord tel" @click="callPhone(15900000000)">
-            15900000000
+          <div class="rightWord tel" @click="callPhone(shopInfo.detailDto.shopPhone)">
+            {{ shopInfo.detailDto.shopPhone }}
             <!-- <a href="tel:13764567708">15900000000</a> -->
           </div>
         </div>
         <div class="flex justifyBetween">
           <div class="">信用分数</div>
-          <div class="rightWord">800</div>
+          <div class="rightWord">{{ shopInfo.detailDto.shopScore }}</div>
         </div>
       </div>
     </div>

@@ -13,8 +13,6 @@
     <div class="">
       <ShopDis />
     </div>
-
-
   </div>
 </template>
 
@@ -59,7 +57,8 @@ export default {
   height: 100vh; overflow: auto; background: #F9F9F9;
   .mint-header{position: absolute;width: 100vw;}
   .top{
-    background: #fff;.imgBox{}
+    background: #fff;.imgBox{min-height: 200px;
+      background: url(../images/icon_bg_noImg.png) no-repeat center;}
     img{width: 100vw;height: auto;}
   }
 }

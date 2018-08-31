@@ -9,7 +9,9 @@
             <mt-button icon="more" slot="right"></mt-button>
           </mt-header> -->
           <div class="searchBox">
-            <input type="search" name="" value="" placeholder="请输入商户关键字搜索">
+            <input type="search" v-model="searchWord" class="search"
+            placeholder="请输入商户关键字搜索" >
+            <i class="icon_close" @click="cleanInput"></i>
           </div>
           <div class="flex font14 justifyAround tabList">
             <div class="flex alignCenter" v-for="(item, index) in tabList"
@@ -28,7 +30,7 @@
           </div>
         </div>
         <div class="content" :style="{height: contentHight + 'px'}">
-          <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" ref="loadmore" @top-status-change="handleTopChange">
+          <mt-loadmore :top-method="loadTop" :bottom-method="loadBottom" :auto-fill="autoFill" :bottom-all-loaded="allLoaded" ref="loadmore" @top-status-change="handleTopChange">
             <List :shopList="shopList"/>
             <div slot="top" class="mint-loadmore-top">
               <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
@@ -41,15 +43,27 @@
 </template>
 
 <script>
-import { Indicator ,Header,Loadmore} from 'mint-ui'
+import { Indicator ,Header, Loadmore, Toast } from 'mint-ui'
 import {mapState} from 'vuex'
 import List from '@/components/List'
+import {MP} from '@/assets/map.js'
+import http from '@/utils/http'
+import api from '@/utils/api'
 
 export default {
   name: 'Home',
   data () {
     return {
-      message: 'hello!',
+      searchWord: '', // 商铺名
+      longitudeAndLatitude: '', // 经纬度
+      businessType: '', // 经营业态
+      orderType: '',  // 店铺评分类型
+      disOrder: 'dasc',// 距离由近到远
+      pageNum: 1,
+      pageSize: '10',
+      isMore: false,
+      totalPage: null, // 总页数
+      autoFill: false, // 若为真，loadmore 会自动检测并撑满其容器
       tabList: [
         {
           title: '按距离'
@@ -74,7 +88,7 @@ export default {
         },
         {
           code: 2,
-          title: '一版'
+          title: '一般'
         },
         {
           code: 3,
@@ -112,23 +126,32 @@ export default {
       selectList: state => state.selectList,
     })
   },
+  created () {
+    this.fetchShopList()
+  },
   mounted () {
     this.init()
   },
   methods: {
     init() {
-      // Indicator.open();
-      // Indicator.close();
-      this.contentHight = document.documentElement.clientHeight - 78
+      this.contentHight = document.documentElement.clientHeight - 92
+      if (true) {
+        this.$nextTick(function(){
+          this.addressDetail()
+        })
+      }
+      window.onunload = function () {
+        localStorage.clear()
+      }
     },
     changeTab (data, index) {
+      // 切换tab
       console.log(data);
       this.isIconDownUpItem = data
       if(index == 0) {
         this.isIconDownUp = false
         return
       } else if (index == 1) {
-        this.$store.commit('GETSHOPLIST','')
         this.$store.commit('GETSELECTLIST',this.categoryList)
       } else if (index == 2){
         this.$store.commit('GETSELECTLIST',this.levelList)
@@ -136,26 +159,139 @@ export default {
     },
     loadTop() {
       // 下滑 更新数据
-      console.log('1551');
+      console.log('更新数据');
+      this.init()
       this.$refs.loadmore.onTopLoaded(); // 固定方法，查询完要调用一次，用于重新定位
-
     },
     loadBottom() {
       // 上滑 加载更多数据
-      console.log('222');
-      // this.allLoaded = true;
-      this.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
+      let vm = this;
+      setTimeout(()=>{
+        if (vm.totalPage - vm.pageNum  > 0) {
+          vm.pageNum ++;
+          vm.isMore = true
+          vm.fetchShopList()
+        } else {
+          vm.allLoaded = true;
+        }
+        vm.$refs.loadmore.onBottomLoaded();// 固定方法，查询完要调用一次，用于重新定位
+      }, 1500)
     },
     handleTopChange (status) {
-        this.topStatus = status;
+      this.topStatus = status;
     },
     changeSelectItem (data) {
+      // this.orderType = data
       this.selectItem = data.code
+      this.init()
     },
     selectBoxShow (data) {
+      this.selectItem = null
       this.isIconDownUpItem = data
       this.isIconDownUp = !this.isIconDownUp
-      console.log(this.isIconDownUpItem, this.isIconDownUp);
+    },
+    addressDetail () {
+      //获取地理位置
+      var vm = this;
+        //全局的this在方法中不能使用，需要重新定义一下
+      var geolocation = new BMap.Geolocation();
+      var gc = new BMap.Geocoder();
+      console.log(gc);
+      geolocation.getCurrentPosition( function(r) {   //定位结果对象会传递给r变量
+
+        if(this.getStatus() == BMAP_STATUS_SUCCESS)
+          {  //通过Geolocation类的getStatus()可以判断是否成功定位。
+            var pt = r.point;
+            gc.getLocation(pt, function(rs){
+              console.log(rs);
+              localStorage.setItem("myAddress", JSON.stringify(rs.point))
+              vm.longitudeAndLatitude = rs.point.lng + ',' + rs.point.lat
+              vm.fetchShopList ()
+            });
+          } else {
+          switch( this.getStatus() )
+            {
+              case 2:
+                Toast({
+                  message: '位置结果未知 获取位置失败',
+                  position: 'bottom',
+                  duration: 2000
+                });
+                break;
+              case 6:
+                Toast({
+                  message: '当前 没有权限 获取位置失败',
+                  position: 'bottom',
+                  duration: 2000
+                });
+                break;
+              case 8:
+                Toast({
+                  message: '请求超时 获取位置失败',
+                  position: 'bottom',
+                  duration: 2000
+                });
+                break;
+              default:
+                Toast({
+                  message: '获取位置失败',
+                  position: 'bottom',
+                  duration: 2000
+                });
+            }
+          }
+
+      },
+      // H5 定位接口中的参数  表示是否允许使用高精度
+      {enableHighAccuracy: true})
+    },
+    cleanInput () {
+      this.searchWord = ''
+    },
+    fetchShopList: async function () {
+      Indicator.open({
+        spinnerType: 'fading-circle'
+      });
+      let params = {
+        shopName: this.searchWord, //
+        longitudeAndLatitude: this.longitudeAndLatitude,//
+        businessType: this.businessType,
+        orderType: this.orderType,
+        disOrder: this.disOrder,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+      }
+      const res = await http.post(api.shopList + '?Time=' + Date.parse(Date()) , params)
+      if (res.status == 200) {
+        Indicator.close();
+        if (res.data.state == '1') {
+          console.log(this.isMore);
+          if (this.isMore == false) {
+            // console.log(res.data.data.pageDto);
+            this.$store.commit('GETSHOPLIST', res.data.data.pageDto)
+          } else {
+            this.$store.commit('CONCATSHOPLIST', res.data.data.pageDto)
+          }
+          console.log(res.data.pageInfo.totalPage);
+          this.totalPage = res.data.pageInfo.totalPage
+          console.log('this.totalPage', this.totalPage);
+        } else {
+          Indicator.close();
+          this.allLoaded = true; // 禁止上滑的行为
+          Toast({
+            message: '网络故障，请稍后再试',
+            position: 'bottom',
+            duration: 2000
+          });
+        }
+      } else {
+        Indicator.close();
+        Toast({
+          message: '网络故障，请稍后再试',
+          position: 'bottom',
+          duration: 2000
+        });
+      }
     }
   },
   components: {
@@ -170,12 +306,16 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 .homeBox{
-  .top{}
+  .top{background: #EFEFF4;padding-top: 20px;}
   .mint-header{background: #2E2C2F !important}
   .searchBox{
-    padding:10px;background: #EFEFF4;text-align: center;margin: 0 auto;
-    input{line-height: 28px; text-align: left;width: 95%;
-      border: none; border-radius: 50px;padding-left: 20px;}
+    text-align: left;margin:0 auto; margin-bottom: 10px;
+    transform: translateX(0);width: 95vw;border-radius: 50px;overflow: hidden;
+    input{line-height: 28px; text-align: left;width: 105%;margin: 0 auto;
+      border: none; padding-left: 20px;}
+    .icon_close{display: inline-block;height: 20px;width: 20px;
+    position: absolute;background: url(../images/close.png) center no-repeat;
+    background-size: 80%;right: 5vw;top: 6px;opacity: 0.5}
   }
   .tabList{ line-height: 28px; background: #EFEFF4;}
   .content{overflow: auto;}

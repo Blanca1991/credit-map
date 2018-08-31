@@ -1,25 +1,27 @@
 <template>
   <div class="list">
-    <div class="flex borderLine" v-for="item in shopList" @click="goToShopInfo(item)">
+    <div class="flex borderLine" v-if="!!shopList" v-for="item in shopList" @click="goToShopInfo(item)">
       <div class="imgBox">
-        <img :src="item.shopPropagandaPhoto" alt="">
+        <img :src="item.shopPropagandaPhoto" v-if="item.shopPropagandaPhoto" alt="">
       </div>
       <div class="flex1" >
         <div class="flex justifyBetween paddingL10 alignCenter">
           <div class="title font20 fontBold">
             {{ item.shopName }}
           </div>
-          <div class="levelBox1 font10"  v-if="item.shopScoreLevel == '1'">
+          <div class="levelBox1 font10"  v-if="item.shopScoreLevel == 'A'
+            || item.shopScoreLevel == 'B'">
             <div class="level1 textRight">
               <span>信用极好</span>
             </div>
           </div>
-          <div class="levelBox2 font10"  v-if="item.shopScoreLevel == '2'">
+          <div class="levelBox2 font10"  v-if="item.shopScoreLevel == 'C'
+            || item.shopScoreLevel == 'D'">
             <div class="level2 textRight">
               <span>信用一般</span>
             </div>
           </div>
-          <div class="levelBox3 font10"  v-if="item.shopScoreLevel == '3'">
+          <div class="levelBox3 font10"  v-if="item.shopScoreLevel == 'E'">
             <div class="level3 textRight">
               <span>信用极差</span>
             </div>
@@ -49,6 +51,7 @@ export default {
     goToShopInfo (data) {
       this.$store.commit('GETSHOPINFO',data )
       this.$router.push({name: 'ShopInfo'})
+      localStorage.setItem('back', true)
     }
   },
   props: ['shopList']
@@ -57,8 +60,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-.list{background: #F9F9F9;padding:10px;
-  .imgBox img{width:20vw;height: 20vw;}
+.list{background: #F9F9F9;padding:0 10px;
+  .imgBox , .imgBox img{width:20vw;height: 20vw;}
   .level1{background: #42C6E0;border: #fff 1px solid;padding:4px 6px;}
   .levelBox1{padding: 2px;background: #42C6E0; color: #fff;}
   .level2{background: #EF7F59;border: #fff 1px solid;padding:4px 6px;}

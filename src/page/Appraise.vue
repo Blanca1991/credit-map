@@ -69,6 +69,9 @@ import iconOkActive from '@/images/icon_ok_active.png'
 import iconBad from '@/images/icon_bad.png'
 import iconBadActive from '@/images/icon_bad_active.png'
 import Upload from '@/components/Upload'
+import http from '@/utils/http'
+import api from '@/utils/api'
+
 
 export default {
   name: 'Appraise',

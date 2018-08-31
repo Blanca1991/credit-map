@@ -53,10 +53,10 @@ export default {
             var reader = new FileReader();//每循环一次都要重新new一个FileReader实例
             reader.readAsDataURL(tmpFile);
             reader.onload=function(e){
-                console.log(e.target.result);
+                // console.log(e.target.result);
                 vm.$store.commit('ADDIMGARR', e.target.result)
                 // vm.imgArr[intI] = e.target.result
-                console.log(vm.imgArr);
+                // console.log(vm.imgArr);
             };
         }
     },
@@ -67,8 +67,8 @@ export default {
     delImgFun (data) {
       this.$store.commit('DELLIMGITEM', data)
       this.imgfile.splice(data,1)
-      console.log(this.imgfile);
-      console.log(this.imgArr);
+      // console.log(this.imgfile);
+      // console.log(this.imgArr);
     }
   },
   props: []

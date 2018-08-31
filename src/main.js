@@ -10,6 +10,7 @@ import Vuex from 'vuex'
 import store from './store/store'
 Vue.use(require('vue-wechat-title'))
 
+import promise from 'es6-promise'
 Vue.prototype.$ajax = axios
 
 Vue.use(MintUI)
