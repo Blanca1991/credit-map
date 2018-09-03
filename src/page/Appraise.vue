@@ -30,7 +30,7 @@
       <div class="mt10">
         <div class="font12 textLeft">评价内容</div>
         <div class="">
-          <textarea name="name" rows="5" maxlength="100"
+          <textarea name="name" rows="5" v-model="commentContent" maxlength="100"
           placeholder="100字以内"></textarea>
         </div>
       </div>
@@ -46,14 +46,14 @@
       <div class="">
         <div class="font12 textLeft mt10">联系方式</div>
         <div class="">
-          <textarea name="name" rows="5" maxlength="100"
+          <textarea name="name" rows="5" maxlength="100" v-model="contactInformation"
           placeholder="您可输入手机号、座机、邮箱、我们会第一时间给您回复"></textarea>
         </div>
       </div>
     </div>
     <div class="buttonBoxWarp">
       <div class="buttonBox padding10">
-        <div class="buttonBoxIn">
+        <div class="buttonBoxIn" @click="submitFun">
           <div class="button">我要评价</div>
         </div>
       </div>
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+import {Header, MessageBox, Toast} from 'mint-ui'
+import {mapState} from 'vuex'
 import iconGread from '@/images/icon_gread.png'
 import iconGreadActive from '@/images/icon_gread_active.png'
 import iconOk from '@/images/icon_ok.png'
@@ -97,8 +99,17 @@ export default {
           isActive: 3
         }
       ],
-      isActive: null
+      isActive: null,
+      commentContent: '', // 评价内容
+      contactInformation: '', // 联系方式
     }
+  },
+  computed: {
+    ...mapState({
+      // 获取数据
+      imgArr: state => state.imgArr,
+      shopInfo: state => state.shopInfo,
+    })
   },
   mounted () {
     this.init()
@@ -109,10 +120,41 @@ export default {
     },
     checkAppraise (index) {
       this.isActive = index+1
-    }
+    },
+    submitFun: async function () {
+      Indicator.open({
+        spinnerType: 'fading-circle'
+      });
+      let params = {
+        regShopName: this.shopInfo.shopName,
+        creditNo: this.shopInfo.creditNo,
+        commentLevel: this.isActive,
+        commentContent: this.commentContent,
+        file: this.imgArr,
+        contactInformation: this.contactInformation
+      }
+      const res = await http.post(api.saveUserMsg + '?Time=' + Date.parse(Date()) , params)
+      if (res.status == 200) {
+        Indicator.close();
+        if (res.data.state == '1') {
+          //
+        } else {
+          //
+        }
+      } else {
+        Indicator.close();
+        Toast({
+          message: '网络故障，请稍后再试',
+          position: 'bottom',
+          duration: 2000
+        });
+      }
+    },
   },
   components:{
-    Upload
+    Upload,
+    Toast,
+    MessageBox
   }
 }
 </script>

@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="font14 infoText">
-      <div class="">
+      <div class="" v-if="shopInfo && shopInfo.detailDto">
         <div class="flex borderLine justifyBetween">
           <div class="">注册名称</div>
           <div class="rightWord">{{ shopInfo.detailDto.regShopName}}</div>
@@ -53,7 +53,7 @@
         </div>
       </div>
     </div>
-    <div class="buttonBox padding10">
+    <div class="buttonBox padding10" v-if="shopInfo && shopInfo.detailDto">
       <div class="buttonBoxIn">
         <div class="button">
           <router-link

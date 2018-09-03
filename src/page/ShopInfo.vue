@@ -17,15 +17,23 @@
 </template>
 
 <script>
-import {Header, Indicator, MessageBox} from 'mint-ui'
+import {Header, Indicator, MessageBox, Toast} from 'mint-ui'
 import {mapState} from 'vuex'
 import ShopDis from '@/components/ShopDis'
+import http from '@/utils/http'
+import api from '@/utils/api'
 
 export default {
   name: 'ShopInfo',
   data () {
     return {
-
+      searchWord: '',
+      longitudeAndLatitude: '',
+      businessType: '',
+      orderType: '',
+      disOrder: 'dasc',
+      pageNum: 1,
+      pageSize: 10
     }
   },
   computed: {
@@ -39,13 +47,74 @@ export default {
   },
   methods: {
     init() {
-
+      this.searchWord =this.getUrlParmas('searchWord')
+      console.log(this.searchWord);
+      if (this.searchWord) {
+        this.fetchShopList()
+      }
+    },
+    fetchShopList: async function () {
+      Indicator.open({
+        spinnerType: 'fading-circle'
+      });
+      let params = {
+        shopName: this.searchWord, //
+        longitudeAndLatitude: this.longitudeAndLatitude,//
+        businessType: this.businessType,
+        orderType: this.orderType,
+        disOrder: this.disOrder,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+      }
+      const res = await http.post(api.shopList + '?Time=' + Date.parse(Date()) , params)
+      if (res.status == 200) {
+        Indicator.close();
+        if (res.data.state == '1') {
+          console.log(this.isMore);
+          if (this.isMore == false) {
+            // console.log(res.data.data.pageDto);
+            this.$store.commit('GETSHOPLIST', res.data.data.pageDto)
+          } else {
+            this.$store.commit('CONCATSHOPLIST', res.data.data.pageDto)
+          }
+          console.log(res.data.pageInfo.totalPage);
+          this.totalPage = res.data.pageInfo.totalPage
+          console.log('this.totalPage', this.totalPage);
+        } else {
+          Indicator.close();
+          this.allLoaded = true; // 禁止上滑的行为
+          Toast({
+            message: '网络故障，请稍后再试',
+            position: 'bottom',
+            duration: 2000
+          });
+        }
+      } else {
+        Indicator.close();
+        Toast({
+          message: '网络故障，请稍后再试',
+          position: 'bottom',
+          duration: 2000
+        });
+      }
+    },
+    getUrlParmas (name) {
+      var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+      var indexNum = window.location.hash.indexOf('?');
+      var searchStr = window.location.hash.substring(indexNum);
+      var r = searchStr.substr(1).match(reg);
+      if (r!=null) {
+        return unescape(r[2])
+      } else {
+        console.log(null);
+      }
     },
   },
   components: {
     Header,
     Indicator,
-    ShopDis
+    ShopDis,
+    Toast
   },
   props: []
 }

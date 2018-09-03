@@ -198,7 +198,6 @@ export default {
       var gc = new BMap.Geocoder();
       console.log(gc);
       geolocation.getCurrentPosition( function(r) {   //定位结果对象会传递给r变量
-
         if(this.getStatus() == BMAP_STATUS_SUCCESS)
           {  //通过Geolocation类的getStatus()可以判断是否成功定位。
             var pt = r.point;
@@ -292,13 +291,15 @@ export default {
           duration: 2000
         });
       }
-    }
+    },
   },
   components: {
     Indicator,
     Header,
     List,
     Loadmore
+  },
+  watch: {
   }
 }
 </script>
@@ -313,6 +314,11 @@ export default {
     transform: translateX(0);width: 95vw;border-radius: 50px;overflow: hidden;
     input{line-height: 28px; text-align: left;width: 105%;margin: 0 auto;
       border: none; padding-left: 20px;}
+    .icon_search{
+      display: inline-block;height: 20px;width: 20px;
+      position: absolute;background: url(../images/icon_search.png) center no-repeat;
+      background-size: 80%;right: 5vw;top: 6px;opacity: 0.5;
+    }
     .icon_close{display: inline-block;height: 20px;width: 20px;
     position: absolute;background: url(../images/close.png) center no-repeat;
     background-size: 80%;right: 5vw;top: 6px;opacity: 0.5}
