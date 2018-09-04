@@ -10,7 +10,7 @@
           </mt-header> -->
           <div class="searchBox">
             <input type="search" v-model="searchWord" class="search"
-            placeholder="请输入商户关键字搜索" >
+            placeholder="请输入商户关键字搜索" @keyup="enterFun($event)">
             <i class="icon_close" @click="cleanInput"></i>
           </div>
           <div class="flex font14 justifyAround tabList">
@@ -127,7 +127,7 @@ export default {
     })
   },
   created () {
-    this.fetchShopList()
+
   },
   mounted () {
     this.init()
@@ -135,11 +135,9 @@ export default {
   methods: {
     init() {
       this.contentHight = document.documentElement.clientHeight - 92
-      if (true) {
-        this.$nextTick(function(){
-          this.addressDetail()
-        })
-      }
+      this.$nextTick(function(){
+        this.addressDetail()
+      })
       window.onunload = function () {
         localStorage.clear()
       }
@@ -261,6 +259,7 @@ export default {
         pageSize: this.pageSize,
       }
       const res = await http.post(api.shopList + '?Time=' + Date.parse(Date()) , params)
+      console.log(res);
       if (res.status == 200) {
         Indicator.close();
         if (res.data.state == '1') {
@@ -271,9 +270,13 @@ export default {
           } else {
             this.$store.commit('CONCATSHOPLIST', res.data.data.pageDto)
           }
-          console.log(res.data.pageInfo.totalPage);
           this.totalPage = res.data.pageInfo.totalPage
           console.log('this.totalPage', this.totalPage);
+          if (this.totalPage && this.totalPage == 1) {
+            this.allLoaded = true;
+          } else if (this.totalPage && this.totalPage > 1) {
+            this.allLoaded = false;
+          }
         } else {
           Indicator.close();
           this.allLoaded = true; // 禁止上滑的行为
@@ -290,6 +293,12 @@ export default {
           position: 'bottom',
           duration: 2000
         });
+      }
+    },
+    enterFun (event) {
+      // 事件绑定 -- 回车键事件
+      if (event.keyCode === 13) {
+        this.fetchShopList()
       }
     },
   },

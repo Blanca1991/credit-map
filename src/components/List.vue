@@ -61,7 +61,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 .list{background: #F9F9F9;padding:0 10px;
-  .imgBox , .imgBox img{width:20vw;height: 20vw;}
+  .imgBox , .imgBox img{width:20vw;height: 20vw;
+    background: url(../images/icon_bg_noImg.png) no-repeat center;
+    background-size: 100%;}
   .level1{background: #42C6E0;border: #fff 1px solid;padding:4px 6px;}
   .levelBox1{padding: 2px;background: #42C6E0; color: #fff;}
   .level2{background: #EF7F59;border: #fff 1px solid;padding:4px 6px;}

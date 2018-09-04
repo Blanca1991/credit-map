@@ -49,7 +49,6 @@ export default {
       data: JSON.stringify(data),
       timeout: 100000,
       headers: {
-        'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/json;charset=UTF-8'
       }
     }).then(
@@ -68,18 +67,10 @@ export default {
       baseURL: baseUrl,
       url,
       headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        'Content-Type': 'multipart/form-data; charset=UTF-8'
       },
       timeout: 10000,
-      data: data,
-      transformRequest: [function (data) {
-        let ret = ''
-        for (let it in data) {
-          ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-        }
-        return ret
-      }]
+      data: data
     }).then(
       (response) => {
         return checkStatus(response)

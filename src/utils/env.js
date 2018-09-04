@@ -1,6 +1,5 @@
-const sitUrl = 'http://10.166.36.145:8080'
+const sitUrl = 'http://localhost:8089'
 let baseUrl = sitUrl
-
 
 export {
   baseUrl
