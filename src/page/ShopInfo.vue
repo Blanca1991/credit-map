@@ -58,7 +58,8 @@ export default {
         spinnerType: 'fading-circle'
       });
       let params = {
-        shopName: this.searchWord, //
+        regShopName: this.searchWord,
+        shopName: '', //
         longitudeAndLatitude: this.longitudeAndLatitude,//
         businessType: this.businessType,
         orderType: this.orderType,
@@ -73,9 +74,15 @@ export default {
           console.log(this.isMore);
           if (this.isMore == false) {
             // console.log(res.data.data.pageDto);
-            this.$store.commit('GETSHOPLIST', res.data.data.pageDto)
+            if (res.data.data && res.data.data.pageDto) {
+              this.$store.commit('GETSHOPLIST', res.data.data.pageDto)
+              this.$store.commit('GETSHOPINFO', res.data.data.pageDto[0])
+            }
           } else {
-            this.$store.commit('CONCATSHOPLIST', res.data.data.pageDto)
+            if (res.data.data && res.data.data.pageDto) {
+              this.$store.commit('GETSHOPLIST', res.data.data.pageDto)
+              this.$store.commit('GETSHOPINFO', res.data.data.pageDto[0])
+            }
           }
           console.log(res.data.pageInfo.totalPage);
           this.totalPage = res.data.pageInfo.totalPage

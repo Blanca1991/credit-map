@@ -54,6 +54,7 @@ export default {
   name: 'Home',
   data () {
     return {
+      regShopName: '',
       searchWord: '', // 商铺名
       longitudeAndLatitude: '', // 经纬度
       businessType: '', // 经营业态
@@ -250,6 +251,7 @@ export default {
         spinnerType: 'fading-circle'
       });
       let params = {
+        regShopName: '',
         shopName: this.searchWord, //
         longitudeAndLatitude: this.longitudeAndLatitude,//
         businessType: this.businessType,
