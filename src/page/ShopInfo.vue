@@ -50,6 +50,7 @@ export default {
       this.searchWord =this.getUrlParmas('searchWord')
       console.log(this.searchWord);
       if (this.searchWord) {
+        console.log('decodeURIComponent', this.searchWord);
         this.fetchShopList()
       }
     },
@@ -107,8 +108,10 @@ export default {
     },
     getUrlParmas (name) {
       var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-      var indexNum = window.location.hash.indexOf('?');
-      var searchStr = window.location.hash.substring(indexNum);
+      let url = decodeURIComponent(window.location.hash)
+      console.log(url);
+      var indexNum = url.indexOf('?');
+      var searchStr = url.substring(indexNum);
       var r = searchStr.substr(1).match(reg);
       if (r!=null) {
         return unescape(r[2])
