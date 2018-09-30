@@ -15,7 +15,7 @@
       <div class="fontBold font16">总体评价</div>
       <div class="flex justifyCenter">
         <div class="iconItem" v-for="(item, index) in iconList"
-          @click="checkAppraise(index)">
+          @click="checkAppraise(item,index)">
           <div class="">
             <i class="iconBg" v-if="isActive != item.isActive"
               :style="{backgroundImage: 'url('+item.icon+')'}"></i>
@@ -100,7 +100,7 @@ export default {
           icon: iconGread,
           iconActive: iconGreadActive,
           word: '好评',
-          isActive: 1
+          isActive: 3
         },
         {
           icon: iconOk,
@@ -112,12 +112,13 @@ export default {
           icon: iconBad,
           iconActive: iconBadActive,
           word: '差评',
-          isActive: 3
+          isActive: 1
         }
       ],
       isActive: '',
       commentContent: '', // 评价内容
       contactInformation: '', // 联系方式
+      isLock: true, //
     }
   },
   computed: {
@@ -134,10 +135,18 @@ export default {
     init(){
 
     },
-    checkAppraise (index) {
-      this.isActive = index+1
+    checkAppraise (item,index) {
+      this.isActive = item.isActive
     },
-    submitFun: async function () {
+    submitFun () {
+      if (this.isLock) {
+        this.isLock = false
+        this.submitFetch()
+      } else {
+        return
+      }
+    },
+    submitFetch: async function () {
       Indicator.open({
         spinnerType: 'fading-circle'
       });
@@ -148,10 +157,10 @@ export default {
         commentContent: this.commentContent,
         contactInformation: this.contactInformation
       }
-      console.log(this.files);
+      console.log(this.imgfile);
       let formData = new FormData();
-      for (let i = 0; i < this.files.length; i ++) {
-        formData.append('file', this.files[i]);
+      for (let i = 0; i < this.imgfile.length; i ++) {
+        formData.append('file', this.imgfile[i]);
       }
       for (let key in params) {
 				formData.append(key, params[key]);
@@ -161,6 +170,7 @@ export default {
 			}
       const res = await http.postFromdata(api.saveUserMsg + '?Time=' + Date.parse(Date()) , formData)
       if (res.status == 200) {
+        this.isLock = true
         Indicator.close();
         if (res.data.state == '1') {
           Toast({
@@ -173,10 +183,17 @@ export default {
           this.contactInformation = ''
           this.files = ''
           this.$store.commit('DELLALLIMGITEM')
+          this.$router.push({name: 'Home'})
         } else {
-          //
+          Indicator.close();
+          Toast({
+            message: res.data.msg,
+            position: 'bottom',
+            duration: 2000
+          });
         }
       } else {
+        this.isLock = true
         Indicator.close();
         Toast({
           message: '网络故障，请稍后再试',
